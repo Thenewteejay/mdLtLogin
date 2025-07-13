@@ -8,18 +8,18 @@ A lightweight modular login and authentication system built using HTML, PHP, Jav
 ## 📁 Project Structure
 
 ```plaintext
-├── LtLogin.html               # Login form
-├── LtRegistration.html        # User registration
-├── LtForgotPassword.html      # Request password via token
-├── LtVerifyToken.html         # Token verification UI
-├── LtResetPassword.html       # Reset password after verifying token
-├── LtChangePassword.html      # Change password (after login)
-├── LtLogout.html              # Logout endpoint
+├── ltLogin.html               # Login form
+├── ltRegistration.html        # User registration
+├── ltForgotPassword.html      # Request password via token
+├── ltVerifyToken.html         # Token verification UI
+├── ltResetPassword.html       # Reset password after verifying token
+├── ltChangePassword.html      # Change password (after login)
+├── ltLogout.html              # Logout endpoint
 
-├── LtScriptLogin.js           # Handles form validation, UI behaviors
-├── LtStyleLogin.css           # Basic styling for the login UI
+├── ltScriptLogin.js           # Handles form validation, UI behaviors
+├── ltStyleLogin.css           # Basic styling for the login UI
 
-├── LtService.php              # Auth logic: verify credentials, reset token, etc.
+├── ltService.php              # Auth logic: verify credentials, reset token, etc.
 ├── MdlLtLoginRoute.php        # Route mappings for API endpoints
 ├── TbRegistrationsController.php # Handles user registration and account changes
 ```
