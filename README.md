@@ -77,8 +77,6 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 
 ---
 
----
-
 ## 📡 API Resources
 All API endpoints use the **POST** method unless stated otherwise.
 
@@ -137,10 +135,8 @@ POST /user-accounts/password/reset/
 ```
 🔐 Resets the user's password using a valid token.  
 **Controller:** `TbRegistrationsController@resetPassword`
-```
 
 ---
-
 
 ## 🙋‍♂️ Author
 
