@@ -1,0 +1,1 @@
+INSERT INTO module_tbl(module_name, module_image, status, date_created, last_update) VALUES('mdLtLogin','N','Enabled','2025-04-23 01:27:17','2025-07-12 11:11:37');;;;;_lifetechend;;;;;
