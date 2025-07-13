@@ -77,6 +77,71 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 
 ---
 
+---
+
+## 📡 API Resources
+All API endpoints use the **POST** method unless stated otherwise.
+
+### Base path: `/user-accounts/`
+
+```http
+POST /user-accounts/login
+```
+🔐 Logs in a user with valid credentials.  
+**Controller:** `TbRegistrationsController@login`
+
+---
+
+```http
+POST /user-accounts/signup
+```
+📝 Registers a new user account.  
+**Controller:** `TbRegistrationsController@signup`
+
+---
+
+```http
+POST /user-accounts/change-password
+```
+🔁 Changes password for an authenticated user.  
+**Controller:** `TbRegistrationsController@changePassword`
+
+---
+
+```http
+POST /user-accounts/forgot-password/get-token
+```
+📩 Sends a password reset token to user's registered email.  
+**Controller:** `TbRegistrationsController@sendToken`
+
+---
+
+```http
+POST /user-accounts/validate/token
+```
+🔑 Validates the password reset token.  
+**Controller:** `TbRegistrationsController@validateToken`
+
+---
+
+```http
+POST /user-accounts/resend-token
+```
+🔄 Resends the password reset token.  
+**Controller:** `TbRegistrationsController@resendToken`
+
+---
+
+```http
+POST /user-accounts/password/reset/
+```
+🔐 Resets the user's password using a valid token.  
+**Controller:** `TbRegistrationsController@resetPassword`
+```
+
+---
+
+
 ## 🙋‍♂️ Author
 
 **Thenewteejay** — [Github Profile](https://github.com/Thenewteejay)
@@ -87,3 +152,4 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 
 Contributions and improvements are welcome.  
 Please submit a pull request or open an issue if you’d like to collaborate.
+
