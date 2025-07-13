@@ -50,7 +50,7 @@ git clone https://github.com/Thenewteejay/mdLtLogin.git
 
 ### 🔽 Download via Official Website
 
-[https://lifetech.host/hub/module](https://lifetech.host/hub/module)
+[lifetech Modules](https://lifetech.host/hub/module)
 
 ---
 
@@ -79,7 +79,7 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 
 ## 🙋‍♂️ Author
 
-**Thenewteejay** — [https://github.com/Thenewteejay](https://github.com/Thenewteejay)
+**Thenewteejay** — [Github Profile](https://github.com/Thenewteejay)
 
 ---
 
