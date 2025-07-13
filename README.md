@@ -78,7 +78,7 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 ---
 
 ## 📡 API Resources
-All API endpoints use the **POST** method unless stated otherwise.
+All API endpoints use the **POST** method.
 
 ### Base path: `/user-accounts/`
 
