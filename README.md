@@ -56,7 +56,7 @@ git clone https://github.com/Thenewteejay/mdLtLogin.git
 
 ## 🧰 Configure Your Environment
 
-- Ensure your server supports **PHP**
+- Ensure your server supports the **latest version of PHP** (recommended)
 - Set up **Lifetechocms** software
 
 Install Lifetechocms using Composer:
