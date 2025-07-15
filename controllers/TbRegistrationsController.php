@@ -1,6 +1,6 @@
 {! import('mdLtLogin', 'LtService.php') !}
 <?php
-
+date_default_timezone_set('Africa/Lagos');
 
 class TbRegistrationsController{
     
@@ -61,18 +61,8 @@ class TbRegistrationsController{
 
         exit();
     }
-    public function resendToken(){
-        
-        ob_end_clean();
-         
-        $dataModelService = new LtService();
-        $response = $dataModelService->sendAnotherToken();
     
-        return $response;
-
-        exit();
-    }
-    public function resetPassword(){
+    public function setPassword(){
         
         ob_end_clean();
          
@@ -89,6 +79,9 @@ class TbRegistrationsController{
 
 
 ?>
+      
+      
+      
       
       
       

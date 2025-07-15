@@ -145,7 +145,7 @@ class LtService {
     
     public function forgotPassword(){
 
-            $lifetechEmail = trim(htmlspecialchars($this->request->lifetechEmail, ENT_QUOTES, 'UTF-8'));
+            $lifetechEmail = trim(htmlspecialchars($this->request->email, ENT_QUOTES, 'UTF-8'));
             
             
             $sqlCheck = $this->dataModel->select()->where('lifetechEmail', '=', $lifetechEmail)->get();
@@ -157,21 +157,13 @@ class LtService {
                 $lifetechUsername = $userInfo->username;
                 
                 
-                function generateRandomToken($length = 6) {
-                        $token = '';
-                        for ($i = 0; $i < $length; $i++) {
-                            $token .= random_int(1, 9); // Generates a random digit between 0 and 9
-                        }
-                    return $token;
-                  }
-                
-                $token = generateRandomToken();
+                $token = $this->generateRandomToken();
                 $expirationTime = time() + (5 * 60); // Current time + expiration time of 5 minutes in seconds
                 $authTokenExpiry = date('Y-m-d H:i:s', $expirationTime);
-                $emailEncode = $this->ltEncryptId($lifetechEmail);
-                $url = lifetech_site_host_address() . "/verify_token?sn=" . $emailEncode;
+               // $emailEncode = $this->ltEncryptId($lifetechEmail);
+                //$url = lifetech_site_host_address() . "/verify_token?sn=" . $emailEncode;
                 
-                function ltSendMail($to, $subject, $recipientName, $token, $type, $url){
+                function ltSendMail($to, $subject, $recipientName, $token, $type){
                     
                             $message = "
                             <html>
@@ -186,7 +178,6 @@ class LtService {
                 
                             <p>If you did not request this code, please disregard this email.</p>
                             <p><p>Note: Replies sent from your email will not be received, this is an automatically generated operational email forwarded by LIFETECH.</p><br></p>
-                            <p>Click <a href='" . $url . "'>here</a> to validate your token</p>
                             <p><b>©lifetech community ".date("Y")."</b></p>
                             </body>
                             </html>
@@ -208,10 +199,10 @@ class LtService {
                         $this->dataModel->authTokenExpiry = $authTokenExpiry;
                         $this->dataModel->update('lifetechEmail', '=', $lifetechEmail);
                         
-                        ltSendMail($lifetechEmail, 'Your One-Time Password (OTP) from Lifetech', $lifetechUsername, $token, "reset password process", $url);
+                        ltSendMail($lifetechEmail, 'Your One-Time Password (OTP) from Lifetech', $lifetechUsername, $token, "forgot password process");
                         
                         
-                    $response = LtResponse::json('Token Sent Successfully', "201", "200", $emailEncode);
+                    $response = LtResponse::json('Token Sent Successfully', "201", "200");
                 
             }else{
                 
@@ -225,8 +216,8 @@ class LtService {
     
     public function verifyToken(){
 
-        $token = trim(htmlspecialchars($this->request->verifyToken, ENT_QUOTES, 'UTF-8'));
-        $lifetechEmail = trim(htmlspecialchars($this->request->lifetechEmail, ENT_QUOTES, 'UTF-8'));
+        $token = trim(htmlspecialchars($this->request->token, ENT_QUOTES, 'UTF-8'));
+        $lifetechEmail = trim(htmlspecialchars($this->request->email, ENT_QUOTES, 'UTF-8'));
         // $tokenEncypt = $token;
         $tokenEncypt = md5($token);
       
@@ -236,6 +227,7 @@ class LtService {
             $user = $querySingle[0];
             
             $userId = $user->lifetechGeneralId;
+            $username = $user->lifetechUsername;
             $expirationTime = strtotime($user->authTokenExpiry);
             
             if(time() > $expirationTime){
@@ -243,13 +235,19 @@ class LtService {
                 $response = LtResponse::json("Token Expired. Please Generate another Token","107","100");
                 
             }else{
+                
+                 $verifiedToken = $this->generateRandomToken();
+                 $expirationTime = time() + (10 * 60); // Current time + expiration time of 5 minutes in seconds
+                 $authTokenExpiry = date('Y-m-d H:i:s', $expirationTime);
                  
-                 $this->dataModel->authToken = "used";
+                //  $this->dataModel->authToken = $verifiedToken;
+                 $this->dataModel->authToken = md5($verifiedToken);
+                 $this->dataModel->authTokenExpiry = $authTokenExpiry;
                  $this->dataModel->update('lifetechGeneralId', '=', $userId);
                  
-                 $encodedId = $this->ltEncryptId($userId);
+                 $data = ['verifiedToken' => $verifiedToken, 'userId' => $userId, 'email' => $lifetechEmail, 'username' => $username];
                  
-                 $response = LtResponse::json('Token Verifed', "201", "200", $encodedId);
+                 $response = LtResponse::json('Token Verifed', "201", "200", $data);
             }
             
             
@@ -263,181 +261,120 @@ class LtService {
     }
     
     
-    public function sendAnotherToken(){
-
-        
-        $lifetechEmail = trim(htmlspecialchars($this->request->lifetechEmail, ENT_QUOTES, 'UTF-8'));
-        
-        $sqlCheck = $this->dataModel->select()->where('lifetechEmail', '=', $lifetechEmail)->get();
-        
-        
-        if(count($sqlCheck) > 0){
-            
-            $userInfo = $sqlCheck[0];
-            $lifetechUsername = $userInfo->username;
-            
-            
-            function generateRandomToken($length = 6) {
-                    $token = '';
-                    for ($i = 0; $i < $length; $i++) {
-                        $token .= random_int(1, 9); // Generates a random digit between 0 and 9
-                    }
-                return $token;
-              }
-            
-            $token = generateRandomToken();
-            $expirationTime = time() + (5 * 60); // Current time + expiration time of 10 minutes in seconds
-            $authTokenExpiry = date('Y-m-d H:i:s', $expirationTime);
-            $emailEncode = $this->ltEncryptId($lifetechEmail);
-            $url = lifetech_site_host_address() . "/verify_token?sn=" . $emailEncode;
-            
-            function ltSendMail($to, $subject, $recipientName, $token, $type, $url){
-                
-                        $message = "
-                        <html>
-                        <head>
-                        <title>".$subject."</title>
-                        </head>
-                        <body>
-                        <p><b>Dear ".$recipientName."</b></p>
-                        
-                        <p>Your One-Time Password (OTP) is <strong>". $token . "</strong></p> 
-                        <p>This code is valid for the next 5 minutes. Please use it to complete your ". $type ." </p>
-            
-                        <p>If you did not request this code, please disregard this email.</p>
-                        <p><p>Note: Replies sent from your email will not be received, this is an automatically generated operational email forwarded by LIFETECH.</p><br></p>
-                        <p>Click <a href='" . $url . "'>here</a> to validate your token</p>
-                        <p><b>©lifetech community ".date("Y")."</b></p>
-                        </body>
-                        </html>
-                        ";
-                        
-                        // Always set content-type when sending HTML email
-                        $headers = "MIME-Version: 1.0" . "\r\n";
-                        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                        
-                        // More headers
-                        $headers .= 'From: Lifetech OCMS <noreply@lifetech.host>' . "\r\n";
-                        // $headers .= 'Cc: ' . $to . "\r\n";
-                        
-                        mail($to,$subject,$message,$headers);
-                            
-                    }
-                    // $this->dataModel->authToken = $token;
-                    $this->dataModel->authToken = md5($token);
-                    $this->dataModel->authTokenExpiry = $authTokenExpiry;
-                    $this->dataModel->update('lifetechEmail', '=', $lifetechEmail);
-                    
-                    ltSendMail($lifetechEmail, 'Your One-Time Password (OTP) from Lifetech', $lifetechUsername, $token, "reset password process", $url);
-                    
-                $response = LtResponse::json('Token Sent Successfully', "201", "200", $responseData = $emailEncode);
-            
-        }else{
-            
-             $response = LtResponse::json("Invalid Email Address", "103", "100");
-            
-        }
-        
-            return $response;
-
-    }
-    
-    
     public function reset(){
- 
-        $userLoginId = empty(LtSession::get('user_id')) ? LtSession::get('user_uid') : LtSession::get('user_id');
-        
+
          $dateNow = date("F j, Y, g:i a");
-         $userId = trim(htmlspecialchars($this->request->profileId, ENT_QUOTES, 'UTF-8'));
-         $password = trim(htmlspecialchars($this->request->newPassword, ENT_QUOTES, 'UTF-8'));
+         $userId = trim(htmlspecialchars($this->request->userId, ENT_QUOTES, 'UTF-8'));
+         $token = trim(htmlspecialchars($this->request->tokenValue, ENT_QUOTES, 'UTF-8'));
+         $password = trim(htmlspecialchars($this->request->password, ENT_QUOTES, 'UTF-8'));
+         $confirm = trim(htmlspecialchars($this->request->confirm, ENT_QUOTES, 'UTF-8'));
+         $tokenEncypt = md5($token);
 
         if(empty($password)){
             $response = LtResponse::json("Password field cannot be empty", "107", "100");
             return $response;
         }
-       
+
         if(empty($userId)){
             $response = LtResponse::json("Invalid User", "107", "100");
             return $response;
         }
         
-         if((int)$userLoginId !== (int)$userId){
-            $response = LtResponse::json("Invalid User Account", "107", "100");
+         if($password !== $confirm){
+            $response = LtResponse::json("Password does not match. Password and Confirm Password must be of the same value", "107", "100");
             return $response;
         }
-       
-      $togetPasswordDetails = LtDdm::createPassword($password);
-            $salt = $togetPasswordDetails->salt;
-            $encrypt = $togetPasswordDetails->hash;
-       
-       
-        $querySingle = $this->dataModel->select()->where('lifetechGeneralId', '=' , $userId)->get();
         
-        if(count($querySingle) > 0){
+        $querySingle = $this->dataModel->select()->where('authToken', '=' , $tokenEncypt)->andWhere('lifetechGeneralId', '=' , $userId)->get();
+        
+            if(count($querySingle) > 0){
+                $user = $querySingle[0];
+                
+                $userId = $user->lifetechGeneralId;
+                $username = $user->lifetechUsername;
+                $expirationTime = strtotime($user->authTokenExpiry);
             
-            // $developer_id = $querySingle[0]->userId;
-            $email = $querySingle[0]->lifetechEmail;
-            
-                if (!empty($verifyPass->responseResult->lifetechSurname)) {
-                    $surname = $verifyPass->responseResult->lifetechSurname;
-                } elseif (!empty($verifyPass->responseResult->lifetechUsername)) {
-                    $surname = $verifyPass->responseResult->lifetechUsername;
-                } else {
-                    $surname = 'User ';
-                }  
+                if(time() > $expirationTime){
+                    
+                    $response = LtResponse::json("Token Expired. Please Generate another Token","107","100");
+                    
+                }else{
+                
+                    $togetPasswordDetails = LtDdm::createPassword($password);
+                    $salt = $togetPasswordDetails->salt;
+                    $encrypt = $togetPasswordDetails->hash;
 
-              /////////////////    for registration table
-            
-                $this->dataModel->salt = $salt;
-                $this->dataModel->lifetechPassword = $encrypt;
-            
-                $this->dataModel->update('lifetechGeneralId', '=', $userId);
-                
-                    $subject = 'Password Reset Complete – You Can Now Log In';
-                 
-                    $message = "
-                    <html>
-                    <head>
-                    <title>". $subject ."</title>
-                    </head>
-                    <body>
-                    <p><b>Dear ".$surname."</b></p>
-                    
-                    <p>We would like to inform you that your account password was successfully updated on ". $dateNow ."</p> 
-                    <p>If you made this change, no further action is required. However, if you did not initiate this update, please contact us immediately to secure your account</p>
+                        if (!empty($user->lifetechSurname)) {
+                            $surname = $user->lifetechSurname;
+                        } elseif (!empty($username)) {
+                            $surname = $username;
+                        } else {
+                            $surname = 'User ';
+                        }  
         
-                    <p>For your security, avoid sharing your password with anyone and ensure it meets strong password standards.</p>
-                    <p>This notification is sent as part of our commitment to account security. If you suspect any unauthorized activity, please report it to our support team promptly.</p>
-                    <p>If you have any questions or need assistance, feel free to reach out to us.</p>
-                    <p><p>Note: Replies sent from your email will not be received, this is an automatically generated operational email forwarded by LIFETECH OCMS.</p><br> <br>
-                    <p> Best regards </p>
+                      /////////////////    for registration table
                     
-                    <p><b>©lifetech community ".date("Y")."</b></p>
-                    </body>
-                    </html>
-                    ";
+                        $this->dataModel->salt = $salt;
+                        $this->dataModel->lifetechPassword = $encrypt;
+                        $this->dataModel->authToken = '';
+                        $this->dataModel->authTokenExpiry = '';
                     
-                    // Always set content-type when sending HTML email
-                    $headers = "MIME-Version: 1.0" . "\r\n";
-                    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+                        $this->dataModel->update('lifetechGeneralId', '=', $userId);
                         
-                    // More headers
-                    $headers .= 'From: Lifetech OCMS <noreply@lifetech.host>' . "\r\n";
-                    mail($email,$subject,$message,$headers);
+                            $subject = 'Password Reset Complete – You Can Now Log In';
+                         
+                            $message = "
+                            <html>
+                            <head>
+                            <title>". $subject ."</title>
+                            </head>
+                            <body>
+                            <p><b>Dear ".$surname."</b></p>
+                            
+                            <p>We would like to inform you that your account password was successfully updated on ". $dateNow ."</p> 
+                            <p>If you made this change, no further action is required. However, if you did not initiate this update, please contact us immediately to secure your account</p>
                 
-                $response = LtResponse::json("Password Reset Successfully", "203", "200");
-                
+                            <p>For your security, avoid sharing your password with anyone and ensure it meets strong password standards.</p>
+                            <p>This notification is sent as part of our commitment to account security. If you suspect any unauthorized activity, please report it to our support team promptly.</p>
+                            <p>If you have any questions or need assistance, feel free to reach out to us.</p>
+                            <p><p>Note: Replies sent from your email will not be received, this is an automatically generated operational email forwarded by LIFETECH OCMS.</p><br> <br>
+                            <p> Best regards </p>
+                            
+                            <p><b>©lifetech community ".date("Y")."</b></p>
+                            </body>
+                            </html>
+                            ";
+                            
+                            // Always set content-type when sending HTML email
+                            $headers = "MIME-Version: 1.0" . "\r\n";
+                            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+                                
+                            // More headers
+                            $headers .= 'From: Lifetech OCMS <noreply@lifetech.host>' . "\r\n";
+                            mail($email,$subject,$message,$headers);
+                        
+                        $response = LtResponse::json("Password Reset Successfully", "203", "200");
+            
+                }
+            
+            
             }else{
-                
-                $response = LtResponse::json("Incorrect details", "103", "100");
+                $response = LtResponse::json("Incorrect Token", "103", "100");
                
             }
-        
+                
              return $response;
 
     }
     
-    
+    public function generateRandomToken($length = 6) {
+        
+        $token = '';
+        for ($i = 0; $i < $length; $i++) {
+            $token .= random_int(1, 9); // Generates a random digit between 0 and 9
+        }
+        return $token;
+    }
     
     
     public function ltEncryptId($id, $key = 'mySecretKey12345678901234567890', $iv = null) {
@@ -498,5 +435,7 @@ class LtService {
       
            
             
+      
+      
       
       

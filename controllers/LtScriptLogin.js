@@ -41,7 +41,7 @@ $(function(){
           //dataType: 'text',
          dataType: 'JSON',
           success:function(response) {
-              console.log(response);
+   
               if(response.responseCategory == '200'){
                 let msg = "Login Successful";
                 swal('Great!', msg, 'success').then(function(){
@@ -290,18 +290,18 @@ $(function(){
 
 /////// Show Password 
 
-$(document).on('change', '#showPassword', function(){
+    $(document).on('change', '#showPassword', function(){
 
     
-    const passwordFields = ["currentPassword", "newPassword", "confirmPassword"];
-        passwordFields.forEach(id => {
-            const field = $(`#${id}`);
-            let type = this.checked ? "text" : "password";
-            field.attr('type', type);
+         const passwordFields = ["currentPassword", "newPassword", "confirmPassword"];
+            passwordFields.forEach(id => {
+                const field = $(`#${id}`);
+                let type = this.checked ? "text" : "password";
+                field.attr('type', type);
             
         })
-    
-})
+        
+    })
     
 })
 
@@ -326,10 +326,6 @@ $(function(){
             return;
         }
 
-        // Create form data
-        let formData = new FormData(document.getElementById('forgot_password'));
-        // formData.append('forgetMail', 'valSendforgetMail');
-
         // Show confirmation popup
         fx_lifetech_button_loader_open();
         swal({
@@ -342,18 +338,17 @@ $(function(){
             },
         }).then((confirmed) => {
             if (confirmed) {
-                
                 $.ajax({
-                    url:'/user-accounts/forgot-password/get-token',
-                    method: "post",
+                    url:`/user-accounts/token/${email}`,
+                    method: "PATCH",
                     dataType: "json",
-                    data: formData,
+                    //data:{'_method':'PATCH'},
                     contentType: false,
                     processData: false,
                     success: function(response) {
                         if (response.responseCategory === '200') {
                             swal('Great!', "An authentication token has been sent to your email. Kindly proceed to your email to complete your validation process.", 'success').then(function() {
-                                window.location.href = `<?=lifetech_site_host_address()?>/verify_token?sn=${response.responseData}`;
+                                window.location.href = `<?=lifetech_site_host_address()?>/verify_token?sn=${email}`;
                                 document.getElementById('forgot_password').reset();
                             });
                         } else {
@@ -447,11 +442,7 @@ $("#valToken").click(function(e) {
         }
 
         fx_lifetech_button_loader_open();
-        
-        var formDataValidation = new FormData();
-        // formDataValidation.append('validateTokenAction', 'validateTokenValue');
-        formDataValidation.append('verifyToken', tokenValue);
-        formDataValidation.append('lifetechEmail', email);
+
         swal({
             title: 'Notice!',
             text: "Are you sure to validate this token?",
@@ -463,26 +454,33 @@ $("#valToken").click(function(e) {
         }).then((result) => {
             if (result) {
                     $.ajax({
-                        url:'/user-accounts/validate/token',
-                        method: "post",
-                        data: formDataValidation,
+                        url:`/user-accounts/token/validate/${tokenValidateEmail}/${tokenValue}`,
+                        method: "PATCH",
                         contentType: false,
                         processData: false,
                         dataType: "json",
                         success: function(response) {
 
-                            var responseCategory = response["responseCategory"];
-                            var responseCode = response["response_code"];
+                            var responseCategory = response.responseCategory;
+                            var responseCode = response.responseCode;
+                            var responseData = response.responseData;
                             if (responseCategory == "200") {
+                                let tokenValue = responseData.verifiedToken;
+                                let userId = responseData.userId;
                                 var msg = "You're set! Token Verified Successfully";
                                   swal('Great!', msg, 'success').then(function(){
-                                      window.location.href = `<?=lifetech_site_host_address()?>/reset_password?sn=${response.responseData}`;
+                                        $('#otp input').each(function() {
+                                           $(this).val('');  // empty the input field
+                                        });
+                                      window.location.href = `<?=lifetech_site_host_address()?>/reset_password?sn=${tokenValue}&id=${userId}`;
 
                                 });
                             } else if(responseCode == "107"){
                                 var msg = "Token Expired. Please Generate another Token";
-                                swal('Oops!', msg, 'warning').then(function(){
-                                    
+                                    swal('Oops!', msg, 'warning').then(function(){
+                                     $('#otp input').each(function() {
+                                           $(this).val('');  // empty the input field
+                                     });
                                 });
                             }else {
                                 var msg = response.responseResult;
@@ -540,17 +538,11 @@ $("#valToken").click(function(e) {
       ////////   Resend Email
    
     function resendEmail(){
-        
-        let resendToEmail = `${email}`;
-        // Create form data
-        let formData = new FormData();
-        // formData.append('resendMail', 'valResendMail');
-        formData.append('lifetechEmail', resendToEmail);
 
         // Show confirmation popup
         swal({
             title: 'Notice!',
-            text: `Click ok to resend 6 digit token to ${masks}`,
+            text: `Click ok to resend 6 digit token to ${tokenValidateEmail}`,
             icon: 'warning',
             buttons: {
                 cancel: true,
@@ -565,15 +557,14 @@ $("#valToken").click(function(e) {
                 
                 fx_lifetech_button_loader_open();
                 $.ajax({
-                    url:'/user-accounts/resend-token',
-                    method: "post",
+                    url:`/user-accounts/token/${tokenValidateEmail}`,
+                    method: "PATCH",
                     dataType: "json",
-                    data: formData,
                     contentType: false,
                     processData: false,
                     success: function(response) {
                         if (response.responseCategory === '200') {
-                            swal('Great!', `An authentication token has been sent to ${masks}. Kindly proceed to your email to complete your validation process.`, 'success').then(function() {
+                            swal('Great!', `An authentication token has been sent to ${tokenValidateEmail}. Kindly proceed to your email to complete your validation process.`, 'success').then(function() {
                                fx_lifetech_button_loader_close();
                             });
                         } else {
@@ -630,10 +621,9 @@ $(function(){
             return;
         }
 
+
         fx_lifetech_button_loader_open();
-        var myFormActivation = document.getElementById('frmActivate');
-        var formDataActivation = new FormData(myFormActivation);
-        // formDataActivation.append('setForgotPassAction', 'setForgotPassValue');
+
         swal({
             title: 'Notice!',
             text: "Are you sure to submit this record?",
@@ -645,11 +635,14 @@ $(function(){
         }).then((result) => {
             if (result) {
                     $.ajax({
-                        url:'/user-accounts/password/reset',
+                        url:'/user-accounts/forgot-password',
                         method: "post",
-                        data: formDataActivation,
-                        contentType: false,
-                        processData: false,
+                        data: {
+                            'userId': userId,
+                            'tokenValue': tokenValue,
+                            'password':lifetechPassword,
+                            'confirm':lifetechConfirm,
+                        },
                         dataType: "json",
                         success: function(response) {
                             // console.log(response);
@@ -691,6 +684,10 @@ $(function(){
       
       
 
+      
+      
+      
+      
       
       
       
