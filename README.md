@@ -167,7 +167,7 @@ POST /user-accounts/change-password
 ```http
 PATCH /user-accounts/token/{email}
 ```
-📩 Sends a token to verify user account.  
+📩 Send a token to verify user account.  
 **Controller:** `TbRegistrationsController@sendToken`
 
 **Response**
