@@ -269,6 +269,7 @@ class LtService {
          $password = trim(htmlspecialchars($this->request->password, ENT_QUOTES, 'UTF-8'));
          $confirm = trim(htmlspecialchars($this->request->confirm, ENT_QUOTES, 'UTF-8'));
          $tokenEncypt = md5($token);
+        //  $tokenEncypt = $token;
 
         if(empty($password)){
             $response = LtResponse::json("Password field cannot be empty", "107", "100");
@@ -435,6 +436,7 @@ class LtService {
       
            
             
+      
       
       
       

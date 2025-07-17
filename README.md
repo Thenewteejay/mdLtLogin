@@ -8,13 +8,14 @@ A lightweight modular login and authentication system built using HTML, PHP, Jav
 ## 📁 Project Structure
 
 ```plaintext
-├── ltLogin.html               # Login form
-├── ltRegistration.html        # User registration
-├── ltForgotPassword.html      # Request password via token
-├── ltVerifyToken.html         # Token verification UI
-├── ltResetPassword.html       # Reset password after verifying token
-├── ltChangePassword.html      # Change password (after login)
-├── ltLogout.html              # Logout endpoint
+├── Login                      # Login form
+├── Sign Up                    # User registration
+├── Logout                     # Logout endpoint
+
+├── Forgot Password            # Request password via token
+├── Verify Token               # Token verification UI
+├── Reset Password             # Set new password after verifying token
+├── Change Password            # Change password (after login)
 
 ├── ltScriptLogin.js           # Handles form validation, UI behaviors
 ├── ltStyleLogin.css           # Basic styling for the login UI
@@ -29,7 +30,7 @@ A lightweight modular login and authentication system built using HTML, PHP, Jav
 ## 🚀 Features
 
 - 🔒 Login / Logout  
-- 📝 Registration  
+- 📝 Sign Up  
 - 🔁 Password Reset (with token verification)  
 - 📩 Email token verification UI  
 - 📦 Modular structure (HTML + PHP separation)  
@@ -69,11 +70,10 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 
 ## 🛠️ Usage
 
-- Open `ltLogin.html` in your browser to start the login flow
-- Register via `ltRegistration.html`
-- Simulate password resets via `ltForgotPassword.html` and `ltResetPassword.html`
+- Open `Login` in your browser to start the login flow
+- Register via `Sign Up`
+- Simulate password resets via `Forgot Password` and `Reset Password`
 - Check `ltService.php` for backend logic or extend as needed
-- You can modify filenames (e.g., `ltLogin.html` to `login.html`) via Lifetechocms software
 
 ---
 
@@ -167,7 +167,7 @@ POST /user-accounts/change-password
 ```http
 PATCH /user-accounts/token/{email}
 ```
-📩 Sends a password reset token to user's registered email.  
+📩 Sends a token to verify user account.  
 **Controller:** `TbRegistrationsController@sendToken`
 
 **Response**
