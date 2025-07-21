@@ -8,20 +8,27 @@ A lightweight modular login and authentication system built using HTML, PHP, Jav
 ## 📁 Project Structure
 
 ```plaintext
-├── ltLogin.html               # Login form
-├── ltRegistration.html        # User registration
-├── ltForgotPassword.html      # Request password via token
-├── ltVerifyToken.html         # Token verification UI
-├── ltResetPassword.html       # Reset password after verifying token
-├── ltChangePassword.html      # Change password (after login)
-├── ltLogout.html              # Logout endpoint
+├── 📁 View
+│   ├── Login                  # Login form
+│   ├── Sign_Up                # User registration
+│   ├── Logout                 # Logout endpoint
+│   ├── Forgot Password        # Request password via token
+│   ├── Verify Token           # Token verification UI
+│   ├── Reset Password         # Set new password after verifying token
+│   └── Change Password        # Change password (after login)
 
-├── ltScriptLogin.js           # Handles form validation, UI behaviors
-├── ltStyleLogin.css           # Basic styling for the login UI
+├── 📁 Service
+│   ├── ltScriptLogin.js       # Handles form validation and UI behaviors
+│   ├── ltStyleLogin.css       # Basic styling for the login UI
+│   └── ltService.php          # Auth logic: verify credentials, reset token, etc.
 
-├── ltService.php              # Auth logic: verify credentials, reset token, etc.
-├── MdlLtLoginRoute.php        # Route mappings for API endpoints
-├── TbRegistrationsController.php # Handles user registration and account changes
+├── 📁 Controller
+│   ├── MdlLtLoginRoute.php    # Route mappings for API endpoints
+│   └── TbRegistrationsController.php # Handles user registration and account changes
+
+├── 📁 Model
+│   └── TbRegistrations.php    # Database model logic
+
 ```
 
 ---
@@ -29,7 +36,7 @@ A lightweight modular login and authentication system built using HTML, PHP, Jav
 ## 🚀 Features
 
 - 🔒 Login / Logout  
-- 📝 Registration  
+- 📝 Sign Up  
 - 🔁 Password Reset (with token verification)  
 - 📩 Email token verification UI  
 - 📦 Modular structure (HTML + PHP separation)  
@@ -69,20 +76,19 @@ composer create-project lifetechocms/lifetechocms "your-project-name"
 
 ## 🛠️ Usage
 
-- Open `ltLogin.html` in your browser to start the login flow
-- Register via `ltRegistration.html`
-- Simulate password resets via `ltForgotPassword.html` and `ltResetPassword.html`
+- Open `Login` in your browser to start the login flow
+- Register via `Sign Up`
+- Simulate password resets via `Forgot Password` and `Reset Password`
 - Check `ltService.php` for backend logic or extend as needed
-- You can modify filenames (e.g., `ltLogin.html` to `login.html`) via Lifetechocms software
 
 ---
 
 ## 📡 API Resources
 
-### Base path: `/user-accounts/`
+### Base path: `/api/user-accounts/`
 
 ```http
-POST /user-accounts/login
+POST /api/user-accounts/login
 ```
 🔐 Logs in a user with valid credentials.  
 **Controller:** `TbRegistrationsController@login`
@@ -107,7 +113,7 @@ POST /user-accounts/login
 ---
 
 ```http
-POST /user-accounts/signup
+POST /api/user-accounts/signup
 ```
 📝 Registers a new user account.  
 **Controller:** `TbRegistrationsController@signup`
@@ -138,7 +144,7 @@ POST /user-accounts/signup
 ---
 
 ```http
-POST /user-accounts/change-password
+POST /api/user-accounts/change-password
 ```
 🔁 Changes password for an authenticated user.  
 **Controller:** `TbRegistrationsController@changePassword`
@@ -165,9 +171,9 @@ POST /user-accounts/change-password
 ---
 
 ```http
-PATCH /user-accounts/token/{email}
+PATCH /api/user-accounts/token/{email}
 ```
-📩 Sends a password reset token to user's registered email.  
+📩 Send a token to verify user account.  
 **Controller:** `TbRegistrationsController@sendToken`
 
 **Response**
@@ -184,7 +190,7 @@ PATCH /user-accounts/token/{email}
 ---
 
 ```http
-PATCH /user-accounts/token/validate/{email}/{token}
+PATCH /api/user-accounts/token/validate/{email}/{token}
 ```
 🔑 Validates the password reset token.  
 **Controller:** `TbRegistrationsController@validateToken`
@@ -203,7 +209,7 @@ PATCH /user-accounts/token/validate/{email}/{token}
 ---
 
 ```http
-POST /user-accounts/forgot-password
+POST /api/user-accounts/forgot-password
 ```
 🔐 Resets the user's password using a valid token.  
 **Controller:** `TbRegistrationsController@setPassword`

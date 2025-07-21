@@ -33,7 +33,10 @@ $(function(){
         // formData.append('userLogins', 'LoginUser');
         
         $.ajax({
-          url:'/user-accounts/login',
+          headers: {
+            'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+          },
+          url:'<?= ltSiteHostAddress() ?>/api/user-accounts/login',
           method:'post',
           data: formData,
           contentType: false, 
@@ -144,7 +147,10 @@ $(function(){
         // formData.append('userReg', 'RegUser');
         
         $.ajax({
-          url:'/user-accounts/signup',
+          headers: {
+            'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+          },
+          url:'<?= ltSiteHostAddress() ?>/user-accounts/signup',
           method:'post',
           data: formData,
           contentType: false, 
@@ -243,7 +249,10 @@ $(function(){
         }).then((confirmed) => {
             if (confirmed) {
                   $.ajax({
-                    url:'/user-accounts/change-password',
+                    headers: {
+                        'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+                      },
+                    url:'<?= ltSiteHostAddress() ?>/api/user-accounts/change-password',
                     method: "POST",
                     data: formChangePassword,
                     contentType: false,
@@ -339,7 +348,10 @@ $(function(){
         }).then((confirmed) => {
             if (confirmed) {
                 $.ajax({
-                    url:`/user-accounts/token/${email}`,
+                    headers: {
+                        'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+                      },
+                    url:`<?= ltSiteHostAddress() ?>/api/user-accounts/token/${email}`,                    
                     method: "PATCH",
                     dataType: "json",
                     //data:{'_method':'PATCH'},
@@ -454,7 +466,10 @@ $("#valToken").click(function(e) {
         }).then((result) => {
             if (result) {
                     $.ajax({
-                        url:`/user-accounts/token/validate/${tokenValidateEmail}/${tokenValue}`,
+                        headers: {
+                            'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+                          },
+                        url:`<?= ltSiteHostAddress() ?>/api/user-accounts/token/validate/${tokenValidateEmail}/${tokenValue}`,                         
                         method: "PATCH",
                         contentType: false,
                         processData: false,
@@ -557,7 +572,10 @@ $("#valToken").click(function(e) {
                 
                 fx_lifetech_button_loader_open();
                 $.ajax({
-                    url:`/user-accounts/token/${tokenValidateEmail}`,
+                    headers: {
+                        'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+                      },
+                    url:`<?= ltSiteHostAddress() ?>/api/user-accounts/token/${tokenValidateEmail}`,                     
                     method: "PATCH",
                     dataType: "json",
                     contentType: false,
@@ -635,7 +653,10 @@ $(function(){
         }).then((result) => {
             if (result) {
                     $.ajax({
-                        url:'/user-accounts/forgot-password',
+                        headers: {
+                            'Authorization': 'Bearer <?= LtSession::get('lw_token'); ?>'
+                          },
+                        url:`<?= ltSiteHostAddress() ?>/api/user-accounts/forgot-password`,
                         method: "post",
                         data: {
                             'userId': userId,
@@ -679,21 +700,5 @@ $(function(){
 })
     
     
-</script>
-      
-      
-      
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+</script> 
       

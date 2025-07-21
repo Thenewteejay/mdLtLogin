@@ -12,19 +12,8 @@ LtRoute::patch('user-accounts/token/{email}', 'mdLtLogin@TbRegistrationsControll
 /// forgot password validate token route
 LtRoute::patch('/user-accounts/token/validate/{email}/{token}', 'mdLtLogin@TbRegistrationsController@validateToken');
 /// forgot password  route
-LtRoute::post('/user-accounts/forgot-password', 'mdLtLogin@TbRegistrationsController@setPassword');
-
-
+LtRoute::post('/user-accounts/forgot-password', 'mdLtLogin@TbRegistrationsController@setPassword'); 
 
 
 ?>
-      
-      
-      
-      
-      
-      
-      
-      
-      
       

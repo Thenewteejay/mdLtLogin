@@ -1,6 +1,6 @@
 {! import('mdLtLogin', 'LtService.php') !}
+
 <?php
-date_default_timezone_set('Africa/Lagos');
 
 class TbRegistrationsController{
     
@@ -78,35 +78,4 @@ class TbRegistrationsController{
 
 
 
-?>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+?> 
